@@ -1,0 +1,25 @@
+func lengthOfLongestSubstring(s string) int {
+    l := len(s)
+    if l <= 1 {
+        return l
+    }
+    sByte := []byte(s)
+    hashMap := make(map[byte]int)
+    maxLen := 0
+    start := 0
+    for end := range sByte {
+        if idx, ok := hashMap[sByte[end]]; ok {
+            if idx + 1 > start {
+                start = idx + 1
+            }
+        }
+        if end - start + 1 > maxLen {
+            maxLen = end - start + 1
+        }
+        hashMap[sByte[end]] = end
+    }
+
+    return maxLen
+}
+//runtime:8 ms
+//memory:2.9 MB
