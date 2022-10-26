@@ -1,0 +1,24 @@
+func convert(s string, numRows int) string {
+    if numRows <= 1 {
+        return s
+    }
+    ss := make([][]byte, numRows, numRows)
+    rets := ""
+
+    sb := []byte(s)
+    divisor := 2 * numRows - 2
+    for i := range sb {
+        j := i % divisor
+        if j < numRows {
+            ss[j] = append(ss[j], sb[i])
+        } else {
+            ss[divisor - j] = append(ss[divisor - j], sb[i])
+        }
+    }
+    for i := range ss {
+        rets += string(ss[i])
+    }
+    return rets
+}
+//runtime:16 ms
+//memory:7.1 MB
