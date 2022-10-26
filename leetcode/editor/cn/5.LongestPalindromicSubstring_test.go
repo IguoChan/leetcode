@@ -35,15 +35,18 @@ import (
 )
 
 func TestLongestPalindromicSubstring(t *testing.T) {
-	//s := "babad"
-	//t.Log(longestPalindrome(s))
+	s := "babad"
+	t.Log(longestPalindrome(s))
 
-	s := "cbbd"
+	s = "aaaa"
+	t.Log(longestPalindrome(s))
+
+	s = "cbbd"
 	t.Log(longestPalindrome(s))
 }
 
-//leetcode submit region begin(Prohibit modification and deletion)
-func longestPalindrome(s string) string {
+// 从中心拓展的方式
+func longestPalindrome1(s string) string {
 	l := len(s)
 	if l <= 1 {
 		return s
@@ -92,6 +95,64 @@ func longestPalindrome(s string) string {
 	}
 
 	return s[maxL : maxR+1]
+}
+
+// 动态规划的方式
+//leetcode submit region begin(Prohibit modification and deletion)
+func longestPalindrome(s string) string {
+	l := len(s)
+	if l <= 1 {
+		return s
+	}
+
+	dp := make([][]bool, l)
+	for i := range s {
+		dp[i] = make([]bool, l)
+		dp[i][i] = true // 边界条件，每个字符都是回文子串
+	}
+
+	start, max := 0, 1
+	// 循环顺序很重要，必须保证dp[i+1][j-1]比dp[i][j]先轮询到，所以我们以j从小到大开始轮询
+	for j := 1; j < l; j++ {
+		for i := 0; i < j; i++ {
+			if s[i] != s[j] {
+				dp[i][j] = false
+			} else {
+				if i+1 == j {
+					dp[i][j] = true
+				} else {
+					dp[i][j] = dp[i+1][j-1]
+				}
+			}
+
+			if max < j-i+1 && dp[i][j] {
+				max = j - i + 1
+				start = i
+			}
+		}
+	}
+
+	// 以下这种轮询会导致dp[i+1][j-1]比dp[i][j]后轮询到，导致bug
+	//for i := 0; i < l-1; i++ {
+	//	for j := i + 1; j < l; j++ {
+	//		if s[i] != s[j] {
+	//			dp[i][j] = false
+	//		} else {
+	//			if i+1 == j {
+	//				dp[i][j] = true
+	//			} else {
+	//				dp[i][j] = dp[i+1][j-1]
+	//			}
+	//		}
+	//
+	//		if max < j-i+1 && dp[i][j] {
+	//			max = j - i + 1
+	//			start = i
+	//		}
+	//	}
+	//}
+
+	return s[start : start+max]
 }
 
 //leetcode submit region end(Prohibit modification and deletion)
