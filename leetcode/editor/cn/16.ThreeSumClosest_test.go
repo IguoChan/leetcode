@@ -36,16 +36,55 @@
 package cn
 
 import (
+	"math"
+	"sort"
 	"testing"
 )
 
 func TestThreeSumClosest(t *testing.T) {
+	nums := []int{-1, 100, 1, -4}
+	t.Log(threeSumClosest(nums, 1))
 
+	nums = []int{0, 0, 3}
+	t.Log(threeSumClosest(nums, 1))
 }
 
 //leetcode submit region begin(Prohibit modification and deletion)
 func threeSumClosest(nums []int, target int) int {
+	sort.Ints(nums)
+	l := len(nums)
+	if l <= 3 {
+		return nums[0] + nums[1] + nums[2]
+	}
 
+	abs := func(a int) int {
+		if a < 0 {
+			return -a
+		}
+		return a
+	}
+
+	minDelta := math.MaxInt32 // 表示sum-target
+	for first := 0; first < l; first++ {
+		third := l - 1 // 使用双指针，第三个数从排序后数组最大值开始
+		for second := first + 1; second < third; {
+			delta := nums[first] + nums[second] + nums[third] - target
+			if delta == 0 {
+				return target
+			}
+			if abs(delta) < abs(minDelta) {
+				minDelta = delta
+			}
+
+			if nums[first]+nums[second]+nums[third] < target {
+				second++
+			} else {
+				third--
+			}
+		}
+	}
+
+	return minDelta + target
 }
 
 //leetcode submit region end(Prohibit modification and deletion)
